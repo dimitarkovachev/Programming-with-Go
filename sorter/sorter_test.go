@@ -1,6 +1,9 @@
 package sorter
 
 import (
+	"fmt"
+	"reflect"
+	"runtime"
 	"sorter/resources"
 	"testing"
 )
@@ -22,10 +25,17 @@ func testSliceSorted(t *testing.T, sortingFunc sortFunc) {
 
 	sortingFunc(slice)
 
+	failed := false
+
 	for i := range slice {
 		if i+1 < len(slice) && slice[i] > slice[i+1] {
-			t.Errorf("slice[i] = %v ; slice[i+1] = %v\n", slice[i], slice[i+1])
-			t.FailNow()
+			t.Errorf("slice[i] = %v; slice[i+1] = %v\n", slice[i], slice[i+1])
+			t.Fail()
+			failed = true
+			break
 		}
+	}
+	if !failed {
+		fmt.Printf("test %v passed\n", runtime.FuncForPC(reflect.ValueOf(sortingFunc).Pointer()).Name())
 	}
 }
