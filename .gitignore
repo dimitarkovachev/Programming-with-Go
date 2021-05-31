@@ -43,3 +43,7 @@ _testmain.go
 /test/pass.out
 /test/run.out
 /test/times.out
+
+.idea/
+car_legends/.idea
+sorter/.idea
