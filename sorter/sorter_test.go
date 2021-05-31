@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-var testSliceLenght int = 100000
+var testSliceLenght int = 10000
 
 type sortFunc func([]int)
 
@@ -18,6 +18,14 @@ func TestSortSlice(t *testing.T) {
 
 func TestSortSliceEventuallyBetter(t *testing.T) {
 	testSliceSorted(t, SortSliceEventuallyBetter)
+}
+
+func BenchmarkSortSlice(b *testing.B) {
+	benchmarkSliceSorted(b, SortSlice)
+}
+
+func BenchmarkSortSliceEventuallyBetter(b *testing.B) {
+	benchmarkSliceSorted(b, SortSliceEventuallyBetter)
 }
 
 func testSliceSorted(t *testing.T, sortingFunc sortFunc) {
@@ -33,4 +41,12 @@ func testSliceSorted(t *testing.T, sortingFunc sortFunc) {
 	}
 
 	fmt.Printf("test %v passed\n", runtime.FuncForPC(reflect.ValueOf(sortingFunc).Pointer()).Name())
+}
+
+func benchmarkSliceSorted(b *testing.B, sortingFunc sortFunc) {
+	slice := resources.GenerateSlice(testSliceLenght)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		sortingFunc(slice)
+	}
 }
