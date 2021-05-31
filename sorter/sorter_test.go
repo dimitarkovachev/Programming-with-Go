@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
-	"sorter/resources"
 	"testing"
+
+	"github.com/dimitarkovachev/Programming-with-Go/sorter/resources"
 )
 
 var testSliceLenght int = 10000
