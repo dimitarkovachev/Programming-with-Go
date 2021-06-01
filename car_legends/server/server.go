@@ -1,12 +1,15 @@
 package main
 
 import (
-	grpcGeneratedCode "car_legends/grpc"
 	"context"
 	"io"
 	"log"
 	"net"
+	strconv "strconv"
 
+	grpcGeneratedCode "github.com/dimitarkovachev/Programming-with-Go/car_legends/grpc"
+
+	sorter "github.com/dimitarkovachev/Programming-with-Go/sorter"
 	"google.golang.org/grpc"
 )
 
@@ -27,6 +30,8 @@ func (s *carLegendsServer) AddCar(ctx context.Context, car *grpcGeneratedCode.Ca
 }
 
 func (s *carLegendsServer) GetCars(ctx context.Context, e *grpcGeneratedCode.Empty) (*grpcGeneratedCode.CarList, error) {
+	s.SortCars()
+
 	var carList = grpcGeneratedCode.CarList{
 		Cars: s.cars,
 	}
@@ -50,6 +55,31 @@ func (s *carLegendsServer) AddCars(stream grpcGeneratedCode.CarLegends_AddCarsSe
 
 		log.Printf("Added car: %v", car)
 	}
+}
+
+func (s *carLegendsServer) SortCars() {
+	yearIndex := map[int]int{}
+	years := []int{}
+	sortedCars := []*grpcGeneratedCode.Car{}
+
+	for i, v := range s.cars {
+		carYearIntParsed, err := strconv.Atoi(v.Year)
+
+		if err != nil {
+			log.Printf("can't sort cars: %v\n", err)
+			return
+		}
+		yearIndex[carYearIntParsed] = i
+		years = append(years, carYearIntParsed)
+	}
+
+	sorter.SortSliceEventuallyBetter(years)
+
+	for _, v := range years {
+		sortedCars = append(sortedCars, s.cars[yearIndex[v]])
+	}
+
+	s.cars = sortedCars
 }
 
 func newServer() *carLegendsServer {

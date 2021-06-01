@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
-	grpcGeneratedCode "car_legends/grpc"
+	grpcGeneratedCode "github.com/dimitarkovachev/Programming-with-Go/car_legends/grpc"
 
-	"car_legends/client/resources"
+	"github.com/dimitarkovachev/Programming-with-Go/car_legends/client/resources"
 
 	"google.golang.org/grpc"
 )
@@ -76,7 +76,9 @@ func runGetCars(client grpcGeneratedCode.CarLegendsClient) {
 		log.Fatalf("Could not get cars: %v", err)
 	}
 
-	log.Print(res)
+	for _, v := range res.Cars {
+		log.Println(v)
+	}
 }
 
 func runAddCars(client grpcGeneratedCode.CarLegendsClient) {

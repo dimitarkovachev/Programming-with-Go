@@ -1,7 +1,7 @@
 package resources
 
 import (
-	grpcGeneratedCode "car_legends/grpc"
+	grpcGeneratedCode "github.com/dimitarkovachev/Programming-with-Go/car_legends/grpc"
 )
 
 func InitCarsToAddSlice() []*grpcGeneratedCode.Car {
@@ -38,7 +38,7 @@ func InitCarsToAddSlice() []*grpcGeneratedCode.Car {
 	carsSlice = append(carsSlice, &grpcGeneratedCode.Car{
 		Manufacturer: "BMW",
 		Model:        "M3",
-		Year:         "1987",
+		Year:         "1986",
 		Notes:        "E30",
 	})
 
