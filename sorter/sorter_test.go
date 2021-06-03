@@ -9,34 +9,42 @@ import (
 	"github.com/dimitarkovachev/Programming-with-Go/sorter/resources"
 )
 
-var testSliceLenght int = 10000
+var testSliceLenght int = 50
 
-type sortFunc func([]int)
+type sortFunctionInPlace func([]int)
+type sortFunction func([]int) []int
 
-func TestSortSlice(t *testing.T) {
-	testSliceSorted(t, SortSlice)
+func TestInsertionSort(t *testing.T) {
+	testSliceSorted(t, InsertionSort)
 }
 
-func TestSortSliceEventuallyBetter(t *testing.T) {
-	testSliceSorted(t, SortSliceEventuallyBetter)
+func TestMergeSort(t *testing.T) {
+	testSliceSorted(t, MergeSort)
 }
 
-func BenchmarkSortSlice(b *testing.B) {
-	benchmarkSliceSorted(b, SortSlice)
+func BenchmarkInsertionSort(b *testing.B) {
+	benchmarkSliceSorted(b, InsertionSort)
 }
 
-func BenchmarkSortSliceEventuallyBetter(b *testing.B) {
-	benchmarkSliceSorted(b, SortSliceEventuallyBetter)
+func BenchmarkMergeSort(b *testing.B) {
+	benchmarkSliceSorted(b, MergeSort)
 }
 
-func testSliceSorted(t *testing.T, sortingFunc sortFunc) {
+func testSliceSorted(t *testing.T, sortingFunc interface{}) {
 	slice := resources.GenerateSlice(testSliceLenght)
 
-	sortingFunc(slice)
+	switch sort := sortingFunc.(type) {
+	case func([]int):
+		sort(slice)
+	case func([]int) []int:
+		slice = sort(slice)
+	case sortFunctionInPlace:
+		// Can't match function type
+	}
 
 	for i := range slice {
 		if i+1 < len(slice) && slice[i] > slice[i+1] {
-			t.Errorf("slice[i] = %v; slice[i+1] = %v\n", slice[i], slice[i+1])
+			t.Errorf("slice[%v] = %v; slice[%v] = %v\n", i, slice[i], i+1, slice[i+1])
 			t.FailNow()
 		}
 	}
@@ -44,10 +52,17 @@ func testSliceSorted(t *testing.T, sortingFunc sortFunc) {
 	fmt.Printf("test %v passed\n", runtime.FuncForPC(reflect.ValueOf(sortingFunc).Pointer()).Name())
 }
 
-func benchmarkSliceSorted(b *testing.B, sortingFunc sortFunc) {
+func benchmarkSliceSorted(b *testing.B, sortingFunc interface{}) {
 	slice := resources.GenerateSlice(testSliceLenght)
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		sortingFunc(slice)
+
+	switch sort := sortingFunc.(type) {
+	case func([]int):
+		for i := 0; i < b.N; i++ {
+			sort(slice)
+		}
+	case func([]int) []int:
+		for i := 0; i < b.N; i++ {
+			sort(slice)
+		}
 	}
 }
