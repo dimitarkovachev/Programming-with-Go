@@ -3,9 +3,7 @@ package sorter
 func InsertionSort(slice []int) {
 	for i := 0; i < len(slice); i++ {
 		for j := i - 1; j >= 0 && slice[j] > slice[j+1]; j-- {
-			temp := slice[j+1]
-			slice[j+1] = slice[j]
-			slice[j] = temp
+			slice[j+1], slice[j] = slice[j], slice[j+1]
 		}
 	}
 }

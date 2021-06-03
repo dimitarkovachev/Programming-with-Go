@@ -30,5 +30,9 @@ func main() {
 
 	sort.Sort(ByLength(squares))
 
+	sort.Slice(squares, func(i, j int) bool {
+		return squares[i].Length < squares[j].Length
+	})
+
 	fmt.Println(squares)
 }
